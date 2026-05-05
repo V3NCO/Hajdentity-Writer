@@ -19,22 +19,7 @@
             android:name=".PrepareActivity"
             android:exported="false" />
         <activity
-            android:name=".PlaintextSunActivity"
-            android:exported="false" />
-        <activity
             android:name=".EncryptedSunActivity"
-            android:exported="false" />
-        <activity
-            android:name=".EncryptedFileSunActivity"
-            android:exported="false" />
-        <activity
-            android:name=".PlaintextReadCounterLimitSunActivity"
-            android:exported="false" />
-        <activity
-            android:name=".EncryptedFileSunCustomKeysActivity"
-            android:exported="false" />
-        <activity
-            android:name=".EncryptedFileSunDiversifiedKeysActivity"
             android:exported="false" />
         <activity
             android:name=".UnsetActivity"

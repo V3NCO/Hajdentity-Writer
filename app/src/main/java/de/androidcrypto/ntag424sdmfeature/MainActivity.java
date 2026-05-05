@@ -18,9 +18,9 @@ import androidx.core.view.WindowInsetsCompat;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private Button menu1Prepare, menu2PlaintextSun, menu3EncryptedSun, menu4EncryptedFileSun, menu5Unset;
-    private Button menu6NdefReader, menu7PlaintextReadCounterLimitSun, menu8EncryptedFileSunCustomKeys;
-    private Button menu10EncryptedFileSunDerivedKeys, menu9TagOverview;
+    private Button menu1Prepare, menu3EncryptedSun, menu5Unset;
+    private Button menu6NdefReader;
+    private Button menu9TagOverview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,14 +37,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
         menu1Prepare = findViewById(R.id.btnMenu1Prepare);
-        menu2PlaintextSun = findViewById(R.id.btnMenu2PlaintextSun);
         menu3EncryptedSun = findViewById(R.id.btnMenu3EncryptedSun);
-        menu4EncryptedFileSun = findViewById(R.id.btnMenu4EncryptedFileSun);
         menu5Unset = findViewById(R.id.btnMenu5Unset);
         menu6NdefReader = findViewById(R.id.btnMenu6NdefReader);
-        menu7PlaintextReadCounterLimitSun = findViewById(R.id.btnMenu7PlaintextReadCounterLimitSun);
-        menu8EncryptedFileSunCustomKeys = findViewById(R.id.btnMenu8EncryptedFileSunCustomKeys);
-        menu10EncryptedFileSunDerivedKeys = findViewById(R.id.btnMenu10EncryptedFileSunDerivedKeys);
         menu9TagOverview = findViewById(R.id.btnMenu9TagInformation);
 
         menu1Prepare.setOnClickListener(new View.OnClickListener() {
@@ -56,29 +51,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        menu2PlaintextSun.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "menu2PlaintextSun");
-                Intent intent = new Intent(MainActivity.this, PlaintextSunActivity.class);
-                startActivity(intent);
-            }
-        });
-
         menu3EncryptedSun.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "menu3EncryptedSun");
                 Intent intent = new Intent(MainActivity.this, EncryptedSunActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        menu4EncryptedFileSun.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "menu4EncryptedFileSun");
-                Intent intent = new Intent(MainActivity.this, EncryptedFileSunActivity.class);
                 startActivity(intent);
             }
         });
@@ -97,33 +74,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "menu6NdefReader");
                 Intent intent = new Intent(MainActivity.this, NdefReaderActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        menu7PlaintextReadCounterLimitSun.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "menu7PlaintextReadCounterLimitSun");
-                Intent intent = new Intent(MainActivity.this, PlaintextReadCounterLimitSunActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        menu8EncryptedFileSunCustomKeys.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "menu8EncryptedFileSunCustomKeys");
-                Intent intent = new Intent(MainActivity.this, EncryptedFileSunCustomKeysActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        menu10EncryptedFileSunDerivedKeys.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "menu10EncryptedFileSunDerivedKeys");
-                Intent intent = new Intent(MainActivity.this, EncryptedFileSunDiversifiedKeysActivity.class);
                 startActivity(intent);
             }
         });
