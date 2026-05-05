@@ -47,7 +47,7 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
 
     private static final String TAG = EncryptedSunActivity.class.getSimpleName();
     private com.google.android.material.textfield.TextInputEditText output;
-    private RadioButton rbUid, rbCounter, rbUidCounter;
+    private RadioButton rbUidCounter;
     private DnaCommunicator dnaC = new DnaCommunicator();
     private NfcAdapter mNfcAdapter;
     private IsoDep isoDep;
@@ -68,8 +68,6 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
         setSupportActionBar(myToolbar);
 
         output = findViewById(R.id.etOutput);
-        rbUid = findViewById(R.id.rbFieldUid);
-        rbCounter = findViewById(R.id.rbFieldCounter);
         rbUidCounter = findViewById(R.id.rbFieldUidCounter);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -282,17 +280,9 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
                     NdefTemplateMaster master = new NdefTemplateMaster();
                     master.usesLRP = isLrpAuthenticationMode;
                     master.fileDataLength = 0; // no (encrypted) file data
-                    if (rbUid.isChecked()) {
-                        sdmSettings.sdmOptionUid = true;
-                        sdmSettings.sdmOptionReadCounter = false;
-                    } else if (rbCounter.isChecked()) {
-                        sdmSettings.sdmOptionUid = false;
-                        sdmSettings.sdmOptionReadCounter = true;
-                    } else {
-                        sdmSettings.sdmOptionUid = true;
-                        sdmSettings.sdmOptionReadCounter = true;
-                    }
-                    ndefRecord = master.generateNdefTemplateFromUrlString("https://sdm.nfcdeveloper.com/tag?picc_data={PICC}&cmac={MAC}", sdmSettings);
+                    sdmSettings.sdmOptionReadCounter = true;
+                    sdmSettings.sdmOptionUid = true;
+                    ndefRecord = master.generateNdefTemplateFromUrlString("https://id.blahaj.engineering/nfc/auth?picc_data={PICC}&cmac={MAC}", sdmSettings);
                     try {
                         WriteData.run(dnaC, NDEF_FILE_NUMBER, ndefRecord, 0);
                     } catch (IOException e) {
