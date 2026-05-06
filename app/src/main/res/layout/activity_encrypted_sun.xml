@@ -113,6 +113,11 @@
                     android:inputType="textPassword"
                     android:visibility="visible" />
 
+                <!-- Optional fields to provide the current (old) key values for key3/key4
+                     Use when the tag's key3/key4 are not the default and you need to supply the old key
+                     in order to change them. Enter 32 hex characters (spaces/dashes allowed). -->
+                <!-- oldkey inputs removed for barebones implementation -->
+
             </RadioGroup>
 
             <TextView
