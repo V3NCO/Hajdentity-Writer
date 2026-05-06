@@ -20,6 +20,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -47,8 +48,8 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
 
     private static final String TAG = EncryptedSunActivity.class.getSimpleName();
     private com.google.android.material.textfield.TextInputEditText output;
-    private RadioButton rbUidCounter;
     private DnaCommunicator dnaC = new DnaCommunicator();
+    private EditText key0input, key3input, key4input;
     private NfcAdapter mNfcAdapter;
     private IsoDep isoDep;
     private byte[] tagIdByte;
@@ -68,8 +69,6 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
         setSupportActionBar(myToolbar);
 
         output = findViewById(R.id.etOutput);
-        rbUidCounter = findViewById(R.id.rbFieldUidCounter);
-
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
     }
 

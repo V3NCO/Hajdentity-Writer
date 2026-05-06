@@ -80,18 +80,38 @@
                 android:id="@+id/rgFields"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_gravity="center_horizontal"
                 android:gravity="start"
                 android:orientation="vertical">
 
-                <RadioButton
-                    android:id="@+id/rbFieldUidCounter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:checked="true"
-                    android:text="(PICC with UID + Counter) + CMAC" />
+                <EditText
+                    android:id="@+id/key0input"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:hint="@string/keyinput0"
+                    android:inputType="textPassword"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/key3input"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:hint="@string/keyinput3"
+                    android:inputType="textPassword"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/key4input"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:hint="@string/keyinput4"
+                    android:inputType="textPassword"
+                    android:visibility="visible" />
 
             </RadioGroup>
 

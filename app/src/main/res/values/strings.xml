@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">NTAG 424 DNA SDM Feature</string>
+    <string name="app_name">Hajdentity writer!</string>
+    <string name="keyinput0">Key 0</string>
+    <string name="keyinput3">Key 3</string>
+    <string name="keyinput4">Key 4</string>
 </resources>
