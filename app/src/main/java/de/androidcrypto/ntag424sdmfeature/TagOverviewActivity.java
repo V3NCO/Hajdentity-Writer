@@ -514,9 +514,6 @@ public class TagOverviewActivity extends AppCompatActivity implements NfcAdapter
                             lastAuthKeyNumber = file01RAccess;
                         }
                     }
-                    byte[] fileContent01 = runReadData(CC_FILE_NUMBER, 0, 32);
-                    writeToUiAppend(output, Utils.printData("content of file 01", fileContent01));
-                    writeToUiAppend(output, Constants.SINGLE_DIVIDER);
 
                     // check which key in required to read the file
                     int file02RAccess = fileSettings02.readPerm;
@@ -540,11 +537,6 @@ public class TagOverviewActivity extends AppCompatActivity implements NfcAdapter
                             lastAuthKeyNumber = file02RAccess;
                         }
                     }
-                    byte[] fileContent02 = runReadData(NDEF_FILE_NUMBER, 0, 256);
-                    writeToUiAppend(output, Utils.printData("content of file 02", fileContent02));
-                    writeToUiAppend(output,"");
-                    writeToUiAppend(output, "ASCII Data: " + new String(fileContent02, StandardCharsets.UTF_8));
-                    writeToUiAppend(output, Constants.SINGLE_DIVIDER);
 
                     // check which key in required to read the file
                     int file03RAccess = fileSettings03.readPerm;
@@ -568,9 +560,6 @@ public class TagOverviewActivity extends AppCompatActivity implements NfcAdapter
                             lastAuthKeyNumber = file03RAccess;
                         }
                     }
-                    byte[] fileContent03 = runReadData( DATA_FILE_NUMBER, 0, 128);
-                    writeToUiAppend(output, Utils.printData("content of file 03", fileContent03));
-                    writeToUiAppend(output, Constants.SINGLE_DIVIDER);
 
                 } catch (IOException e) {
                     Log.e(TAG, "Exception: " + e.getMessage());
