@@ -260,8 +260,8 @@ public class NdefReaderActivity extends AppCompatActivity implements NfcAdapter.
                 // we expecting a header 'https://sdm.nfcdeveloper.com/'
                 // followed by 'tag?' or 'tagpt?'
                 String fullPayload = "";
-                if (ndefText.startsWith("https://id.blahaj.engineering/")) {
-                    fullPayload = ndefText.replace("https://id.blahaj.engineering/", "");
+                if (ndefText.startsWith("https://sdm.nfcdeveloper.com/")) {
+                    fullPayload = ndefText.replace("https://sdm.nfcdeveloper.com/", "");
                 } else {
                     writeToUiAppend(output, "The Backend Server URL is not matching, aborted");
                     return;
