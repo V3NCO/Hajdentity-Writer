@@ -52,6 +52,44 @@
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
+            <RadioGroup
+                android:id="@+id/rgFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="start"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/key0input"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:hint="@string/keyinput0"
+                    android:inputType="textPassword"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/key3input"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:hint="@string/keyinput3"
+                    android:inputType="textPassword"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/key4input"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:ems="10"
+                    android:hint="@string/keyinput4"
+                    android:inputType="textPassword"
+                    android:visibility="visible" />
+
+            </RadioGroup>
 
             <TextView
                 android:id="@+id/tvInformation"
