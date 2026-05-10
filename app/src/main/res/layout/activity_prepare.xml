@@ -41,6 +41,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:hint="Backend Provisioning API URL">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etProvisionApiUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="https://your-python-api.com/api/provision-tag" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:hint="User ID / Account Name">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -48,51 +62,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="e.g. user_123" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="Final NDEF URL to write">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etFinalUrl"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textUri"
-                    android:hint="https://yoursite/v?u=user_123&amp;p={PICC}&amp;c={MAC}" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="Key0 (Admin) - 32 hex chars">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etKey0Input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:hint="aabbcc... (32 hex)" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="Key4 (CMAC) - 32 hex chars">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etKey4Input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:hint="1122aa... (32 hex)" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -122,7 +91,7 @@
                 android:layout_marginTop="16dp"
                 android:padding="12dp"
                 android:background="#E3F2FD"
-                android:text="Security Mode: Key Exchange\n\nThis app is fully offline. Paste or scan the Final URL, Key0 and Key4 values (provided by your web UI) into the fields above before tapping a tag."
+                android:text="Security Mode: Key Exchange\n\nThe Master Key is never stored on this device. The app sends the Tag UID and User ID to your backend to receive unique keys and the final NDEF URL."
                 android:textColor="#1565C0"
                 android:textSize="14sp" />
 
