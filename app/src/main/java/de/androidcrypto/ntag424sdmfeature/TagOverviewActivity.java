@@ -444,6 +444,28 @@ public class TagOverviewActivity extends AppCompatActivity implements NfcAdapter
                     }
                     writeToUiAppend(output, Constants.DOUBLE_DIVIDER);
 
+                    if (!isLrpAuthenticationMode) {
+                        success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                    } else {
+                        success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                    }
+                    if (!success) {
+                        writeToUiAppend(output, "Error on Authentication with ACCESS KEY 0, aborted");
+                        return;
+                    }
+
+                    byte[] realTagUid = null;
+                    try {
+                        realTagUid = GetCardUid.run(dnaC);
+                        Log.d(TAG, Utils.printData("real Tag UID", realTagUid));
+                        writeToUiAppend(output, "real Tag UID: " + Utils.bytesToHex(realTagUid));
+                    } catch (ProtocolException e) {
+                        writeToUiAppend(output, "Could not read the real Tag UID, aborted");
+                        writeToUiAppend(output, "returnCode is " + Utils.byteToHex(dnaC.getLastCommandResult().status2));
+                        return;
+                    }
+                    writeToUiAppend(output, Constants.DOUBLE_DIVIDER);
+
                     // silent authenticate with Access Key 0, should work
                     if (!isLrpAuthenticationMode) {
                         success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);

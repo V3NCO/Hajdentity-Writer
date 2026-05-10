@@ -204,6 +204,10 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
             public void run() {
                 boolean success = false;
                 try {
+                    byte[] key0 = Utils.hexStringToByteArray(key0input.getText().toString());
+                    byte[] key3 = Utils.hexStringToByteArray(key3input.getText().toString());
+                    byte[] key4 = Utils.hexStringToByteArray(key4input.getText().toString());
+
                     dnaC = new DnaCommunicator();
                     try {
                         dnaC.setTransceiver((bytesToSend) -> isoDep.transceive(bytesToSend));
@@ -225,14 +229,14 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
                     // authentication
                     boolean isLrpAuthenticationMode = false;
 
-                    success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                    success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, key0);
                     if (success) {
                         writeToUiAppend(output, "AES Authentication SUCCESS");
                     } else {
                         // if the returnCode is '919d' = permission denied the tag is in LRP mode authentication
                         if (dnaC.getLastCommandResult().status2 == PERMISSION_DENIED) {
                             // try to run the LRP authentication
-                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, key0);
                             if (success) {
                                 writeToUiAppend(output, "LRP Authentication SUCCESS");
                                 isLrpAuthenticationMode = true;
@@ -323,9 +327,9 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
                     // to change the keys we need an authentication with application key 0 = master application key
                     // authentication
                     if (!isLrpAuthenticationMode) {
-                        success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                        success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, key0);
                     } else {
-                        success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                        success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, key0);
                     }
                     if (success) {
                         writeToUiAppend(output, "Authentication SUCCESS");
@@ -338,7 +342,7 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
                     // change application key 3
                     success = false;
                     try {
-                        ChangeKey.run(dnaC, ACCESS_KEY3, APPLICATION_KEY_3, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
+                        ChangeKey.run(dnaC, ACCESS_KEY3, key3, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
                         success = true;
                     } catch (IOException e) {
                         Log.e(TAG, "ChangeKey 3 IOException: " + e.getMessage());
@@ -349,9 +353,9 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
                         writeToUiAppend(output, "Change Application Key 3 FAILURE (maybe the key is already the FACTORY key ?)");
                         // silent authenticate with Access Key 0 as we had a failure
                         if (!isLrpAuthenticationMode) {
-                            success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                            success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, key0);
                         } else {
-                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, key0);
                         }
                         if (!success) {
                             writeToUiAppend(output, "Error on Authentication with ACCESS KEY 0, aborted");
@@ -363,7 +367,7 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
                     // this key can be static or diversified
                     success = false;
                     try {
-                        ChangeKey.run(dnaC, ACCESS_KEY4, APPLICATION_KEY_4, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
+                        ChangeKey.run(dnaC, ACCESS_KEY4, key4, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
                         success = true;
                     } catch (IOException e) {
                         Log.e(TAG, "ChangeKey 4 IOException: " + e.getMessage());
@@ -378,9 +382,9 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
                     if (!success) {
                         // silent authenticate with Access Key 0 as we had a failure
                         if (!isLrpAuthenticationMode) {
-                            success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                            success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, key0);
                         } else {
-                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, key0);
                         }
                         if (!success) {
                             writeToUiAppend(output, "Error on Authentication with ACCESS KEY 0, aborted");
@@ -406,7 +410,7 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
                         Log.d(TAG, Utils.printData("diversifiedKey", diversifiedKey));
                         success = false;
                         try {
-                            ChangeKey.run(dnaC, ACCESS_KEY4, diversifiedKey, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
+                            ChangeKey.run(dnaC, ACCESS_KEY4, key4, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
                             success = true;
                         } catch (IOException e) {
                             Log.e(TAG, "ChangeKey 4 IOException: " + e.getMessage());

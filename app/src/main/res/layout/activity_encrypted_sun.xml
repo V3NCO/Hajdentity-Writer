@@ -92,7 +92,7 @@
                     android:layout_height="50dp"
                     android:ems="10"
                     android:hint="@string/keyinput0"
-                    android:inputType="textPassword"
+                    android:inputType="text"
                     android:visibility="visible" />
 
                 <EditText
@@ -101,7 +101,7 @@
                     android:layout_height="50dp"
                     android:ems="10"
                     android:hint="@string/keyinput3"
-                    android:inputType="textPassword"
+                    android:inputType="text"
                     android:visibility="visible" />
 
                 <EditText
@@ -110,7 +110,7 @@
                     android:layout_height="50dp"
                     android:ems="10"
                     android:hint="@string/keyinput4"
-                    android:inputType="textPassword"
+                    android:inputType="text"
                     android:visibility="visible" />
 
             </RadioGroup>

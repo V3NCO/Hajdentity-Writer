@@ -2,7 +2,6 @@ package de.androidcrypto.ntag424sdmfeature;
 
 import static net.bplearning.ntag424.CommandResult.PERMISSION_DENIED;
 import static net.bplearning.ntag424.constants.Ntag424.NDEF_FILE_NUMBER;
-import static net.bplearning.ntag424.constants.Permissions.ACCESS_EVERYONE;
 import static net.bplearning.ntag424.constants.Permissions.ACCESS_KEY0;
 import static net.bplearning.ntag424.constants.Permissions.ACCESS_KEY2;
 import static net.bplearning.ntag424.constants.Permissions.ACCESS_KEY3;
@@ -73,10 +72,11 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
         setSupportActionBar(myToolbar);
 
         output = findViewById(R.id.etOutput);
+        key0input = findViewById(R.id.key0input);
+        key3input = findViewById(R.id.key3input);
+        key4input = findViewById(R.id.key4input);
+
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        key0input = (EditText) findViewById(R.id.key0input);
-        key3input = (EditText) findViewById(R.id.key3input);
-        key4input = (EditText) findViewById(R.id.key4input);
     }
 
     /**
@@ -262,14 +262,13 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
                         // do nothing, skip authentication
                     } else {
                         if (ACCESS_KEY_RW != ACCESS_KEY0) {
-                            // silent authentication
                             if (!isLrpAuthenticationMode) {
                                 success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY_RW, Ntag424.FACTORY_KEY);
                             } else {
                                 success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY_RW, Ntag424.FACTORY_KEY);
                             }
                             if (!success) {
-                                writeToUiAppend(output, "Error on Authentication with ACCESS KEY RW, aborted");
+                                writeToUiAppend(output, "Error on Authentication with key " + ACCESS_KEY_RW  + ", aborted");
                                 return;
                             }
                         }
@@ -278,8 +277,8 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
                     // write URL template to file 02 depending on radio button
                     SDMSettings sdmSettings = new SDMSettings();
                     sdmSettings.sdmEnabled = true; // at this point we are just preparing the templated but do not enable the SUN/SDM feature
-                    sdmSettings.sdmMetaReadPerm = ACCESS_KEY2; // Set to a key to get encrypted PICC data
-                    sdmSettings.sdmFileReadPerm = ACCESS_KEY2; // Used to create the MAC and Encrypted File data
+                    sdmSettings.sdmMetaReadPerm = ACCESS_KEY3; // Set to a key to get encrypted PICC data
+                    sdmSettings.sdmFileReadPerm = ACCESS_KEY4; // Used to create the MAC and Encrypted File data
                     sdmSettings.sdmReadCounterRetrievalPerm = ACCESS_NONE; // Not sure what this is for
                     sdmSettings.sdmOptionEncryptFileData = false;
                     byte[] ndefRecord = null;
@@ -299,16 +298,16 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
                     }
                     writeToUiAppend(output, "File 02h Writing the NDEF URL Template SUCCESS");
 
-                    // check if we authenticated with the right key - here we need the CAR key
+
+                    // check if we authenticated with the right key - to change the key settings we need the CAR key
                     if (ACCESS_KEY_CAR != ACCESS_KEY_RW) {
-                        // silent authentication
                         if (!isLrpAuthenticationMode) {
                             success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY_CAR, Ntag424.FACTORY_KEY);
                         } else {
                             success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY_CAR, Ntag424.FACTORY_KEY);
                         }
                         if (!success) {
-                            writeToUiAppend(output, "Error on Authentication with ACCESS KEY CAR, aborted");
+                            writeToUiAppend(output, "Error on Authentication with key " + ACCESS_KEY_CAR  + ", aborted");
                             return;
                         }
                     }
@@ -322,92 +321,12 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
                     try {
                         ChangeFileSettings.run(dnaC, NDEF_FILE_NUMBER, fileSettings02);
                     } catch (IOException e) {
+                        e.printStackTrace();
                         Log.e(TAG, "ChangeFileSettings IOException: " + e.getMessage());
                         writeToUiAppend(output, "ChangeFileSettings File 02 Error, Operation aborted");
                         return;
                     }
                     writeToUiAppend(output, "File 02h Change File Settings SUCCESS");
-
-                    final String[] keyInputs = new String[3];
-                    final CountDownLatch latch = new CountDownLatch(1);
-                    runOnUiThread(() -> {
-                        keyInputs[0] = key0input.getText() == null ? "" : key0input.getText().toString().trim();
-                        keyInputs[1] = key3input.getText() == null ? "" : key3input.getText().toString().trim();
-                        keyInputs[2] = key4input.getText() == null ? "" : key4input.getText().toString().trim();
-                        latch.countDown();
-                    });
-                    try {
-                        latch.await();
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
-
-                    byte[] newKey0 = null;
-                    byte[] newKey3 = null;
-                    byte[] newKey4 = null;
-                    if (!TextUtils.isEmpty(keyInputs[0])) {
-                        newKey0 = Utils.hexStringToByteArrayMinus(keyInputs[0]);
-                        if (newKey0 == null || newKey0.length != 16) {
-                            writeToUiAppend(output, "Key0 value is invalid - must be 16 bytes (32 hex chars). Skipping Key0 change.");
-                            newKey0 = null;
-                        }
-                    }
-                    if (!TextUtils.isEmpty(keyInputs[1])) {
-                        newKey3 = Utils.hexStringToByteArrayMinus(keyInputs[1]);
-                        if (newKey3 == null || newKey3.length != 16) {
-                            writeToUiAppend(output, "Key3 value is invalid - must be 16 bytes (32 hex chars). Skipping Key3 change.");
-                            newKey3 = null;
-                        }
-                    }
-                    if (!TextUtils.isEmpty(keyInputs[2])) {
-                        newKey4 = Utils.hexStringToByteArrayMinus(keyInputs[2]);
-                        if (newKey4 == null || newKey4.length != 16) {
-                            writeToUiAppend(output, "Key4 value is invalid - must be 16 bytes (32 hex chars). Skipping Key4 change.");
-                            newKey4 = null;
-                        }
-                    }
-
-                    if (newKey0 != null || newKey3 != null || newKey4 != null) {
-                        // barebones: authenticate with factory Key0 via AES before changing application keys
-                        success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
-                        if (!success) {
-                            writeToUiAppend(output, "Error on Authentication with ACCESS KEY 0, cannot change application keys, aborted");
-                            return;
-                        }
-                    }
-
-                    if (newKey0 != null) {
-                        try {
-                            ChangeKey.run(dnaC, ACCESS_KEY0, null, newKey0, Constants.APPLICATION_KEY_VERSION_NEW);
-                            writeToUiAppend(output, "Change Application Key 0 SUCCESS");
-                        } catch (IOException e) {
-                            Log.e(TAG, "ChangeKey 0 IOException: " + e.getMessage());
-                            writeToUiAppend(output, "Change Application Key 0 FAILURE: " + e.getMessage());
-                            return;
-                        }
-                    }
-
-                    if (newKey3 != null) {
-                        try {
-                            ChangeKey.run(dnaC, ACCESS_KEY3, Constants.APPLICATION_KEY_DEFAULT, newKey3, Constants.APPLICATION_KEY_VERSION_NEW);
-                            writeToUiAppend(output, "Change Application Key 3 SUCCESS");
-                        } catch (IOException e) {
-                            Log.e(TAG, "ChangeKey 3 IOException: " + e.getMessage());
-                            writeToUiAppend(output, "Change Application Key 3 FAILURE: " + e.getMessage());
-                            return;
-                        }
-                    }
-
-                    if (newKey4 != null) {
-                        try {
-                            ChangeKey.run(dnaC, ACCESS_KEY4, Constants.APPLICATION_KEY_DEFAULT, newKey4, Constants.APPLICATION_KEY_VERSION_NEW);
-                            writeToUiAppend(output, "Change Application Key 4 SUCCESS");
-                        } catch (IOException e) {
-                            Log.e(TAG, "ChangeKey 4 IOException: " + e.getMessage());
-                            writeToUiAppend(output, "Change Application Key 4 FAILURE: " + e.getMessage());
-                            return;
-                        }
-                    }
 
                 } catch (IOException e) {
                     Log.e(TAG, "Exception: " + e.getMessage());
