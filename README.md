@@ -1,3 +1,6 @@
+> [!WARNING]
+> Hey! this repo is a fork of https://github.com/AndroidCrypto/Ntag424SdmFeature! that's all :3
+
 # NTAG 424 DNA Secure Dynamic Messaging ("SDM") Feature
 
 This is the accompanying app to my articles **Demystify the Secure Dynamic Message with NTAG 424 DNA NFC tags (Android/Java) Parts 1 and 2**,
