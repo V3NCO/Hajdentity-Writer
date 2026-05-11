@@ -52,7 +52,6 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
     private static final String TAG = EncryptedSunActivity.class.getSimpleName();
     private com.google.android.material.textfield.TextInputEditText output;
     private DnaCommunicator dnaC = new DnaCommunicator();
-    private EditText key0input, key3input, key4input;
     private NfcAdapter mNfcAdapter;
     private IsoDep isoDep;
     private byte[] tagIdByte;
@@ -72,10 +71,6 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
         setSupportActionBar(myToolbar);
 
         output = findViewById(R.id.etOutput);
-        key0input = findViewById(R.id.key0input);
-        key3input = findViewById(R.id.key3input);
-        key4input = findViewById(R.id.key4input);
-
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
     }
 
