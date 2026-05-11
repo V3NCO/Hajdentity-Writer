@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="9 Tag Overview"
+                android:text="@string/overview_tv_title"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Gives an overview about the tag"
+                android:text="@string/overview_tv_menu"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -60,7 +60,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="16dp"
-                android:text="Checks Authentication Scheme (AES/LRP), Keys, File Settings"
+                android:text="@string/overview_tv_menu1_info"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="normal" />
@@ -74,7 +74,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/share_rounded_corner_light_orange_with_border"
                 android:padding="4dp"
-                android:text="Please note: when a NTAG424DNA tag is tapped to the NFC reader the action runs without any further confirmation."
+                android:text="@string/overview_tv_information"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="18sp"
@@ -105,7 +105,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    android:hint="operation output"
+                    android:hint="@string/overview_output_layout"
                     app:boxCornerRadiusBottomEnd="5dp"
                     app:boxCornerRadiusBottomStart="5dp"
                     app:boxCornerRadiusTopEnd="5dp"
@@ -120,9 +120,9 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:focusable="false"
-                        android:text="choose an operation ..."
+                        android:text="@string/overview_output"
                         android:typeface="monospace"
-                        tools:ignore="KeyboardInaccessibleWidget" />
+                        tools:ignore="KeyboardInaccessibleWidget,VisualLintTextFieldSize" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.divider.MaterialDivider

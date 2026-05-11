@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="Encrypted SUN Feature"
+                android:text="@string/encrypted_sun_feature"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:padding="16dp"
-                android:text="Write the URL template for Encrypted SUN"
+                android:text="@string/write_the_url_template_for_encrypted_sun"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -61,7 +61,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="Write the URL template for an Encrypted SUN Message to file 2 on the tag"
+                android:text="@string/write_the_url_template_for_an_encrypted_sun_message_to_file_2_on_the_tag"
                 android:textAlignment="center"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -71,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Select the Output Fields"
+                android:text="@string/select_the_output_fields"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -85,7 +85,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/share_rounded_corner_light_orange_with_border"
                 android:padding="4dp"
-                android:text="Please note: when a NTAG424DNA tag is tapped to the NFC reader the action runs without any further confirmation."
+                android:text="@string/please_note_when_a_ntag424dna_tag_is_tapped_to_the_nfc_reader_the_action_runs_without_any_further_confirmation"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="18sp"
@@ -116,7 +116,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    android:hint="operation output"
+                    android:hint="@string/operation_output"
                     app:boxCornerRadiusBottomEnd="5dp"
                     app:boxCornerRadiusBottomStart="5dp"
                     app:boxCornerRadiusTopEnd="5dp"
@@ -131,9 +131,9 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:focusable="false"
-                        android:text="choose an operation ..."
+                        android:text="@string/choose_an_operation"
                         android:typeface="monospace"
-                        tools:ignore="KeyboardInaccessibleWidget" />
+                        tools:ignore="KeyboardInaccessibleWidget,VisualLintTextFieldSize" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.divider.MaterialDivider

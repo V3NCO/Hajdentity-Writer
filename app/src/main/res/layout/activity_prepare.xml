@@ -109,7 +109,7 @@
                         android:autofillHints="key0"
                         android:inputType="text"
                         android:text="@string/keyinput0"
-                        tools:ignore="LabelFor" />
+                        tools:ignore="LabelFor,VisualLintTextFieldSize" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -127,7 +127,7 @@
                         android:autofillHints="key3"
                         android:inputType="text"
                         android:text="@string/keyinput3"
-                        tools:ignore="LabelFor" />
+                        tools:ignore="LabelFor,VisualLintTextFieldSize" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -145,7 +145,7 @@
                         android:autofillHints="key4"
                         android:inputType="text"
                         android:text="@string/keyinput4"
-                        tools:ignore="LabelFor" />
+                        tools:ignore="LabelFor,VisualLintTextFieldSize" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
@@ -208,7 +208,7 @@
                         android:focusable="false"
                         android:text="choose an operation ..."
                         android:typeface="monospace"
-                        tools:ignore="HardcodedText,KeyboardInaccessibleWidget" />
+                        tools:ignore="HardcodedText,KeyboardInaccessibleWidget,VisualLintTextFieldSize" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.divider.MaterialDivider

@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="5 Unset the SUN feature"
+                android:text="@string/unset_tv_title"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -48,10 +48,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Write the default Capability Container (CC) to file 1 and clear the file 2 on the tag. Change the application keys to default and unsets any SDM feature."
+                android:text="@string/unset_menu1"
                 android:textAlignment="center"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="VisualLintLongText" />
             <RadioGroup
                 android:id="@+id/rgFields"
                 android:layout_width="match_parent"
@@ -66,28 +67,34 @@
                     android:id="@+id/key0input"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:autofillHints="key0"
                     android:ems="10"
                     android:hint="@string/keyinput0"
                     android:inputType="textPassword"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    tools:ignore="VisualLintTextFieldSize" />
 
                 <EditText
                     android:id="@+id/key3input"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:autofillHints="key3"
                     android:ems="10"
                     android:hint="@string/keyinput3"
                     android:inputType="textPassword"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    tools:ignore="VisualLintTextFieldSize" />
 
                 <EditText
                     android:id="@+id/key4input"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:autofillHints="key4"
                     android:ems="10"
                     android:hint="@string/keyinput4"
                     android:inputType="textPassword"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    tools:ignore="VisualLintTextFieldSize" />
 
             </RadioGroup>
 
@@ -100,7 +107,7 @@
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/share_rounded_corner_light_orange_with_border"
                 android:padding="4dp"
-                android:text="Please note: when a NTAG424DNA tag is tapped to the NFC reader the action runs without any further confirmation."
+                android:text="@string/unset_tv_info"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="18sp"
@@ -131,7 +138,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
-                    android:hint="operation output"
+                    android:hint="@string/unset_output_layout"
                     app:boxCornerRadiusBottomEnd="5dp"
                     app:boxCornerRadiusBottomStart="5dp"
                     app:boxCornerRadiusTopEnd="5dp"
@@ -146,9 +153,9 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:focusable="false"
-                        android:text="choose an operation ..."
+                        android:text="@string/unset_output"
                         android:typeface="monospace"
-                        tools:ignore="KeyboardInaccessibleWidget" />
+                        tools:ignore="KeyboardInaccessibleWidget,VisualLintTextFieldSize" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.divider.MaterialDivider

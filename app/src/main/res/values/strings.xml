@@ -8,4 +8,22 @@
     <string name="prepare_menu_1">Write the Capability Container and URL template</string>
     <string name="prepare_menu_2">Select the Key Number 4 Source</string>
     <string name="prepare_titlee">Prepare the tag for NDEF operations</string>
+    <string name="overview_output">choose an operation …</string>
+    <string name="overview_output_layout">operation output</string>
+    <string name="overview_tv_menu">Gives an overview about the tag</string>
+    <string name="overview_tv_information">Please note: when a NTAG424DNA tag is tapped to the NFC reader the action runs without any further confirmation.</string>
+    <string name="overview_tv_menu1_info">Checks Authentication Scheme (AES/LRP), Keys, File Settings</string>
+    <string name="overview_tv_title">9 Tag Overview</string>
+    <string name="unset_tv_info">Please note: when a NTAG424DNA tag is tapped to the NFC reader the action runs without any further confirmation.</string>
+    <string name="unset_tv_title">5 Unset the SUN feature</string>
+    <string name="unset_menu1">Write the default Capability Container (CC) to file 1 and clear the file 2 on the tag. Change the application keys to default and unsets any SDM feature.</string>
+    <string name="unset_output">choose an operation …</string>
+    <string name="unset_output_layout">operation output</string>
+    <string name="encrypted_sun_feature">Encrypted SUN Feature</string>
+    <string name="write_the_url_template_for_encrypted_sun">Write the URL template for Encrypted SUN</string>
+    <string name="write_the_url_template_for_an_encrypted_sun_message_to_file_2_on_the_tag">Write the URL template for an Encrypted SUN Message to file 2 on the tag</string>
+    <string name="select_the_output_fields">Select the Output Fields</string>
+    <string name="please_note_when_a_ntag424dna_tag_is_tapped_to_the_nfc_reader_the_action_runs_without_any_further_confirmation">Please note: when a NTAG424DNA tag is tapped to the NFC reader the action runs without any further confirmation.</string>
+    <string name="choose_an_operation">choose an operation …</string>
+    <string name="operation_output">operation output</string>
 </resources>
