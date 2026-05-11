@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="Main Menu"
+                android:text="@string/main_menu"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Prepare the tag for NDEF operations"
+                android:text="@string/prepare_the_tag_for_ndef_operations"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -60,7 +60,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="Write the Capability Container (CC) to file 1 and an URL template to file 2 on the tag."
+                android:text="@string/write_the_capability_container_cc_to_file_1_and_an_url_template_to_file_2_on_the_tag"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="normal" />
@@ -73,7 +73,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:backgroundTint="@color/application_color_light_background_mint"
-                android:text="Prepare the tag for NDEF operations" />
+                android:text="@string/prepare_the_tag_for_ndef_operations" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -87,7 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Setup Encrypted SUN Message"
+                android:text="@string/setup_encrypted_sun_message"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -99,7 +99,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="Write the URL template for an Encrypted SUN Message to file 2 on the tag."
+                android:text="@string/write_the_url_template_for_an_encrypted_sun_message_to_file_2_on_the_tag"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="normal" />
@@ -112,7 +112,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:backgroundTint="@color/application_color_light_background_green"
-                android:text="Setup Encrypted SUN Message" />
+                android:text="@string/setup_encrypted_sun_message" />
 
 
             <com.google.android.material.divider.MaterialDivider
@@ -128,7 +128,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Tag Overview"
+                android:text="@string/tag_overview"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -140,7 +140,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="Gives an overview about the tag"
+                android:text="@string/gives_an_overview_about_the_tag"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="normal" />
@@ -153,7 +153,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:backgroundTint="@color/application_color_light_background_green"
-                android:text="Overview about the tag" />
+                android:text="@string/overview_about_the_tag" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -167,7 +167,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Unset the SDM Feature (fabric settings)"
+                android:text="@string/unset_the_sdm_feature_fabric_settings"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -179,7 +179,7 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="Write the default Capability Container (CC) to file 1 and clear file 2 on the tag."
+                android:text="@string/write_the_default_capability_container_cc_to_file_1_and_clear_file_2_on_the_tag"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="normal" />
@@ -192,7 +192,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:backgroundTint="@color/application_color_background_red"
-                android:text="Unset the SUN feature (fabric settings)" />
+                android:text="@string/unset_the_sun_feature_fabric_settings" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"

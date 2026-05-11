@@ -26,4 +26,14 @@
     <string name="please_note_when_a_ntag424dna_tag_is_tapped_to_the_nfc_reader_the_action_runs_without_any_further_confirmation">Please note: when a NTAG424DNA tag is tapped to the NFC reader the action runs without any further confirmation.</string>
     <string name="choose_an_operation">choose an operation …</string>
     <string name="operation_output">operation output</string>
+    <string name="prepare_the_tag_for_ndef_operations">Prepare the tag for NDEF operations</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="setup_encrypted_sun_message">Setup Encrypted SUN Message</string>
+    <string name="tag_overview">Tag Overview</string>
+    <string name="gives_an_overview_about_the_tag">Gives an overview about the tag</string>
+    <string name="overview_about_the_tag">Overview about the tag</string>
+    <string name="unset_the_sdm_feature_fabric_settings">Unset the SDM Feature (fabric settings)</string>
+    <string name="write_the_default_capability_container_cc_to_file_1_and_clear_file_2_on_the_tag">Write the default Capability Container (CC) to file 1 and clear file 2 on the tag.</string>
+    <string name="unset_the_sun_feature_fabric_settings">Unset the SUN feature (fabric settings)</string>
+    <string name="write_the_capability_container_cc_to_file_1_and_an_url_template_to_file_2_on_the_tag">Write the Capability Container (CC) to file 1 and an URL template to file 2 on the tag.</string>
 </resources>
