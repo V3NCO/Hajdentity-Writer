@@ -3,4 +3,9 @@
     <string name="keyinput0">Key 0</string>
     <string name="keyinput3">Key 3</string>
     <string name="keyinput4">Key 4</string>
+    <string name="prepare_tv_title">Write the modified Capability Container (CC) to file 1 and the URL template to file 2 on the tag</string>
+    <string name="prepare_info">Please note: when a NTAG424DNA tag is tapped to the NFC reader the action runs without any further confirmation.</string>
+    <string name="prepare_menu_1">Write the Capability Container and URL template</string>
+    <string name="prepare_menu_2">Select the Key Number 4 Source</string>
+    <string name="prepare_titlee">Prepare the tag for NDEF operations</string>
 </resources>

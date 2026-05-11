@@ -30,8 +30,10 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxWidth="488dp"
+                android:layout_gravity="center_horizontal"
                 android:padding="10dp"
-                android:text="Prepare the tag for NDEF operations"
+                android:text="@string/prepare_titlee"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -47,9 +49,11 @@
                 android:id="@+id/tvMenu1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxWidth="488dp"
+                android:layout_gravity="center_horizontal"
                 android:visibility="gone"
                 android:padding="16dp"
-                android:text="Write the Capability Container and URL template"
+                android:text="@string/prepare_menu_1"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -58,10 +62,12 @@
                 android:id="@+id/tvMenu1Info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxWidth="488dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="Write the modified Capability Container (CC) to file 1 and the URL template to file 2 on the tag"
+                android:text="@string/prepare_tv_title"
                 android:textAlignment="center"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -70,48 +76,91 @@
                 android:id="@+id/tvMenu2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxWidth="488dp"
+                android:layout_gravity="center_horizontal"
                 android:padding="16dp"
-                android:text="Select the Key Number 4 Source"
+                android:text="@string/prepare_menu_2"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <RadioGroup
+            <LinearLayout
                 android:id="@+id/rgFields"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_gravity="center_horizontal"
-                android:gravity="start"
+                android:gravity="center_horizontal"
                 android:orientation="vertical">
 
-                <RadioButton
-                    android:id="@+id/rbKey4Static"
-                    android:layout_width="wrap_content"
-                    android:layout_height="70dp"
-                    android:checked="true"
-                    android:text="Use a STATIC Key 4 (used for Encrypted File data and CMAC) (endpoint is not working, use NDEF Reader instead)" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="488dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-                <RadioButton
-                    android:id="@+id/rbKey4Diversified"
-                    android:layout_width="wrap_content"
-                    android:layout_height="70dp"
-                    android:checked="false"
-                    android:text="Use a Tag UID - DIVERSIFIED Key 4 (used for Encrypted File data and CMAC) (endpoint is not working, use NDEF Reader instead)" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/keyinput0"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="key0"
+                        android:inputType="text"
+                        android:text="@string/keyinput0"
+                        tools:ignore="LabelFor" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-            </RadioGroup>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="488dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/keyinput3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="key3"
+                        android:inputType="text"
+                        android:text="@string/keyinput3"
+                        tools:ignore="LabelFor" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="488dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/keyinput4"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autofillHints="key4"
+                        android:inputType="text"
+                        android:text="@string/keyinput4"
+                        tools:ignore="LabelFor" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tvInformation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxWidth="488dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/share_rounded_corner_light_orange_with_border"
                 android:padding="4dp"
-                android:text="Please note: when a NTAG424DNA tag is tapped to the NFC reader the action runs without any further confirmation."
+                android:text="@string/prepare_info"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="18sp"
@@ -139,6 +188,8 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxWidth="488dp"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="8dp"
@@ -147,9 +198,7 @@
                     app:boxCornerRadiusBottomStart="5dp"
                     app:boxCornerRadiusTopEnd="5dp"
                     app:boxCornerRadiusTopStart="5dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+                    tools:ignore="HardcodedText">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etOutput"
@@ -159,7 +208,7 @@
                         android:focusable="false"
                         android:text="choose an operation ..."
                         android:typeface="monospace"
-                        tools:ignore="KeyboardInaccessibleWidget" />
+                        tools:ignore="HardcodedText,KeyboardInaccessibleWidget" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.divider.MaterialDivider
