@@ -36,4 +36,5 @@
     <string name="write_the_default_capability_container_cc_to_file_1_and_clear_file_2_on_the_tag">Write the default Capability Container (CC) to file 1 and clear file 2 on the tag.</string>
     <string name="unset_the_sun_feature_fabric_settings">Unset the SUN feature (fabric settings)</string>
     <string name="write_the_capability_container_cc_to_file_1_and_an_url_template_to_file_2_on_the_tag">Write the Capability Container (CC) to file 1 and an URL template to file 2 on the tag.</string>
+    <string name="return_to_main_menu">Return to Main Menu</string>
 </resources>

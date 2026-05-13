@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/action_return_home"
-        android:title="Return to Main Menu"
+        android:title="@string/return_to_main_menu"
         app:showAsAction="never"/>
 
 </menu>

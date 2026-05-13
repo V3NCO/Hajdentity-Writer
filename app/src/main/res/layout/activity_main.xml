@@ -27,7 +27,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -44,7 +43,6 @@
                 app:dividerInsetStart="8dp" />
 
             <TextView
-                android:id="@+id/tvMenu1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
@@ -54,7 +52,6 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvMenu1Info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
@@ -83,7 +80,6 @@
                 app:dividerInsetStart="8dp" />
 
             <TextView
-                android:id="@+id/tvMenu3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
@@ -93,7 +89,6 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvMenu3Info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
@@ -124,7 +119,6 @@
 
 
             <TextView
-                android:id="@+id/tvMenu9"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
@@ -134,7 +128,6 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvMenu9Info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
@@ -163,7 +156,6 @@
                 app:dividerInsetStart="8dp" />
 
             <TextView
-                android:id="@+id/tvMenu5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
@@ -173,7 +165,6 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvMenu5Info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
