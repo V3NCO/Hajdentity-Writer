@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'de.androidcrypto.ntag424sdmfeature'
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "de.androidcrypto.ntag424sdmfeature"
@@ -37,4 +37,9 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
