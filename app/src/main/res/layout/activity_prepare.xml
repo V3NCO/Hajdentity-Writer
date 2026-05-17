@@ -98,6 +98,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/p_key0input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints="key0"
@@ -115,6 +116,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/p_key3input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints="key3"
@@ -132,6 +134,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/p_key4input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints="key4"

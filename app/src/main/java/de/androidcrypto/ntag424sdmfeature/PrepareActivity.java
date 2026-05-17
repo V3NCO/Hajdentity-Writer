@@ -28,6 +28,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -59,6 +60,7 @@ public class PrepareActivity extends AppCompatActivity implements NfcAdapter.Rea
     private DnaCommunicator dnaC = new DnaCommunicator();
     private NfcAdapter mNfcAdapter;
     private IsoDep isoDep;
+    private EditText p_key0input, p_key3input, p_key4input;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
