@@ -10,7 +10,6 @@ import static net.bplearning.ntag424.constants.Permissions.ACCESS_KEY3;
 import static net.bplearning.ntag424.constants.Permissions.ACCESS_KEY4;
 import static net.bplearning.ntag424.constants.Permissions.ACCESS_NONE;
 
-import static de.androidcrypto.ntag424sdmfeature.Constants.APPLICATION_KEY_3;
 import static de.androidcrypto.ntag424sdmfeature.Constants.APPLICATION_KEY_DEFAULT;
 import static de.androidcrypto.ntag424sdmfeature.Constants.APPLICATION_KEY_VERSION_NEW;
 import static de.androidcrypto.ntag424sdmfeature.Constants.NDEF_FILE_01_CAPABILITY_CONTAINER_R;
@@ -76,6 +75,10 @@ public class PrepareActivity extends AppCompatActivity implements NfcAdapter.Rea
         Toolbar myToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(myToolbar);
         output = findViewById(R.id.etOutput);
+        p_key0input = findViewById(R.id.p_key0input);
+        p_key3input = findViewById(R.id.p_key3input);
+        p_key4input = findViewById(R.id.p_key4input);
+
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
     }
@@ -189,6 +192,12 @@ public class PrepareActivity extends AppCompatActivity implements NfcAdapter.Rea
         Thread worker = new Thread(() -> {
             boolean success;
             try {
+
+                byte[] newKey0 = Utils.hexStringToByteArray(p_key0input.getText().toString());
+                byte[] newKey3 = Utils.hexStringToByteArray(p_key3input.getText().toString());
+                byte[] newKey4 = Utils.hexStringToByteArray(p_key4input.getText().toString());
+
+
                 dnaC = new DnaCommunicator();
                 try {
                     dnaC.setTransceiver((bytesToSend) -> isoDep.transceive(bytesToSend));
@@ -311,7 +320,7 @@ public class PrepareActivity extends AppCompatActivity implements NfcAdapter.Rea
                 // change application key 3
                 success = false;
                 try {
-                    ChangeKey.run(dnaC, ACCESS_KEY3, APPLICATION_KEY_DEFAULT , APPLICATION_KEY_3, APPLICATION_KEY_VERSION_NEW);
+                    ChangeKey.run(dnaC, ACCESS_KEY3, APPLICATION_KEY_DEFAULT , newKey3, APPLICATION_KEY_VERSION_NEW);
                     success = true;
                 } catch (IOException e) {
                     Log.e(TAG, "ChangeKey 3 IOException: " + e.getMessage());
@@ -326,9 +335,6 @@ public class PrepareActivity extends AppCompatActivity implements NfcAdapter.Rea
                 // change application key 4
                 // the key source depends on the radio button, either use a static Key 4 or a diversified Key 4 (tag UID)
 
-                byte[] newKey4; // TODO: Replace with key input
-
-                newKey4 = Utils.hexStringToByteArray("A4000000000000000000000000000000");
                 Log.d(TAG, Utils.printData("Using a STATIC Key 4", newKey4));
 
                 success = false;
@@ -342,6 +348,22 @@ public class PrepareActivity extends AppCompatActivity implements NfcAdapter.Rea
                     writeToUiAppend(output, "Change Application Key 4 to CUSTOM key SUCCESS");
                 } else {
                     writeToUiAppend(output, "Change Application Key 4 FAILURE, Operation aborted");
+                    return;
+                }
+
+
+                // change application key 0
+                success = false;
+                try {
+                    ChangeKey.run(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY , newKey0, APPLICATION_KEY_VERSION_NEW);
+                    success = true;
+                } catch (IOException e) {
+                    Log.e(TAG, "ChangeKey 0 IOException: " + e.getMessage());
+                }
+                if (success) {
+                    writeToUiAppend(output, "Change Application Key 0 SUCCESS");
+                } else {
+                    writeToUiAppend(output, "Change Application Key 0 FAILURE, Operation aborted");
                     return;
                 }
             } catch (IOException e) {
