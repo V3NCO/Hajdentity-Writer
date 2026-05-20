@@ -102,8 +102,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints="key0"
+                        android:hint="@string/keyinput0"
                         android:inputType="text"
-                        android:text="@string/keyinput0"
                         tools:ignore="LabelFor,VisualLintTextFieldSize" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -120,8 +120,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints="key3"
+                        android:hint="@string/keyinput3"
                         android:inputType="text"
-                        android:text="@string/keyinput3"
                         tools:ignore="LabelFor,VisualLintTextFieldSize" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -138,8 +138,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints="key4"
+                        android:hint="@string/keyinput4"
                         android:inputType="text"
-                        android:text="@string/keyinput4"
                         tools:ignore="LabelFor,VisualLintTextFieldSize" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>

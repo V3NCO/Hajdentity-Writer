@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -34,27 +33,24 @@ import androidx.core.view.WindowInsetsCompat;
 
 import net.bplearning.ntag424.DnaCommunicator;
 import net.bplearning.ntag424.command.ChangeFileSettings;
-import net.bplearning.ntag424.command.ChangeKey;
 import net.bplearning.ntag424.command.FileSettings;
 import net.bplearning.ntag424.command.GetFileSettings;
 import net.bplearning.ntag424.command.WriteData;
-import net.bplearning.ntag424.constants.Ntag424;
 import net.bplearning.ntag424.encryptionmode.AESEncryptionMode;
 import net.bplearning.ntag424.encryptionmode.LRPEncryptionMode;
 import net.bplearning.ntag424.sdm.NdefTemplateMaster;
 import net.bplearning.ntag424.sdm.SDMSettings;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
 
 public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapter.ReaderCallback {
 
     private static final String TAG = EncryptedSunActivity.class.getSimpleName();
     private com.google.android.material.textfield.TextInputEditText output;
+    private EditText es_key0input;
     private DnaCommunicator dnaC = new DnaCommunicator();
     private NfcAdapter mNfcAdapter;
     private IsoDep isoDep;
-    private byte[] tagIdByte;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +63,11 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
             return insets;
         });
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        Toolbar myToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(myToolbar);
 
         output = findViewById(R.id.etOutput);
+        es_key0input = findViewById(R.id.es_key0input);
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
     }
 
@@ -120,9 +117,7 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
                 // Make a Vibration
                 vibrateShort();
 
-                runOnUiThread(() -> {
-                    output.setText("");
-                });
+                runOnUiThread(() -> output.setText(""));
 
                 isoDep.connect();
                 if (!isoDep.isConnected()) {
@@ -132,7 +127,7 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
                 }
 
                 // get tag ID
-                tagIdByte = tag.getId();
+                byte[] tagIdByte = tag.getId();
                 writeToUiAppend(output, "Tag ID: " + Utils.bytesToHex(tagIdByte));
                 Log.d(TAG, "tag id: " + Utils.bytesToHex(tagIdByte));
                 writeToUiAppend(output, "NFC tag connected");
@@ -182,154 +177,150 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
 
     private void runWorker() {
         Log.d(TAG, "Encrypted Sun Activity Worker");
-        Thread worker = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean success = false;
+        Thread worker = new Thread(() -> {
+            boolean success;
+            try {
+                dnaC = new DnaCommunicator();
+                byte[] newKey0 = Utils.hexStringToByteArray(es_key0input.getText().toString());
                 try {
-                    dnaC = new DnaCommunicator();
-                    try {
-                        dnaC.setTransceiver((bytesToSend) -> isoDep.transceive(bytesToSend));
-                    } catch (NullPointerException npe) {
-                        writeToUiAppend(output, "Please tap a tag before running any tests, aborted");
-                        return;
-                    }
-                    dnaC.setLogger((info) -> Log.d(TAG, "Communicator: " + info));
-                    dnaC.beginCommunication();
+                    dnaC.setTransceiver((bytesToSend) -> isoDep.transceive(bytesToSend));
+                } catch (NullPointerException npe) {
+                    writeToUiAppend(output, "Please tap a tag before running any tests, aborted");
+                    return;
+                }
+                dnaC.setLogger((info) -> Log.d(TAG, "Communicator: " + info));
+                dnaC.beginCommunication();
 
-                    /**
-                     * These steps are running - assuming that all keys are 'default' keys filled with 16 00h values
-                     * 1) Authenticate with Application Key 00h in AES mode
-                     * 2) If the authentication in AES mode fails try to authenticate in LRP mode
-                     * 3) Write an URL template to file 02 with PICC (Uid and/or Counter) plus CMAC
-                     * 4) Get existing file settings for file 02
-                     * 5) Save the modified file settings back to the tag
-                     */
+                /*
+                 * These steps are running - assuming that all keys are 'default' keys filled with 16 00h values
+                 * 1) Authenticate with Application Key 00h in AES mode
+                 * 2) If the authentication in AES mode fails try to authenticate in LRP mode
+                 * 3) Write a URL template to file 02 with PICC (Uid and/or Counter) plus CMAC
+                 * 4) Get existing file settings for file 02
+                 * 5) Save the modified file settings back to the tag
+                 */
 
-                    // authentication
-                    boolean isLrpAuthenticationMode = false;
+                // authentication
+                boolean isLrpAuthenticationMode = false;
 
-                    success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
-                    if (success) {
-                        writeToUiAppend(output, "AES Authentication SUCCESS");
-                    } else {
-                        // if the returnCode is '919d' = permission denied the tag is in LRP mode authentication
-                        if (dnaC.getLastCommandResult().status2 == PERMISSION_DENIED) {
-                            // try to run the LRP authentication
-                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
-                            if (success) {
-                                writeToUiAppend(output, "LRP Authentication SUCCESS");
-                                isLrpAuthenticationMode = true;
-                            } else {
-                                writeToUiAppend(output, "LRP Authentication FAILURE");
-                                writeToUiAppend(output, "returnCode is " + Utils.byteToHex(dnaC.getLastCommandResult().status2));
-                                writeToUiAppend(output, "Authentication not possible, Operation aborted");
-                                return;
-                            }
+                success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, newKey0);
+                if (success) {
+                    writeToUiAppend(output, "AES Authentication SUCCESS");
+                } else {
+                    // if the returnCode is '919d' = permission denied the tag is in LRP mode authentication
+                    if (dnaC.getLastCommandResult().status2 == PERMISSION_DENIED) {
+                        // try to run the LRP authentication
+                        success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, newKey0);
+                        if (success) {
+                            writeToUiAppend(output, "LRP Authentication SUCCESS");
+                            isLrpAuthenticationMode = true;
                         } else {
-                            // any other error, print the error code and return
-                            writeToUiAppend(output, "AES Authentication FAILURE");
+                            writeToUiAppend(output, "LRP Authentication FAILURE");
                             writeToUiAppend(output, "returnCode is " + Utils.byteToHex(dnaC.getLastCommandResult().status2));
+                            writeToUiAppend(output, "Authentication not possible, Operation aborted");
                             return;
                         }
-                    }
-
-                    // get File Settings for File 2 to get the key number necessary for writing (key 0 or key 2 ?)
-                    FileSettings fileSettings02 = null;
-                    try {
-                        fileSettings02 = GetFileSettings.run(dnaC, NDEF_FILE_NUMBER);
-                    } catch (Exception e) {
-                        Log.e(TAG, "getFileSettings File 02 Exception: " + e.getMessage());
-                        writeToUiAppend(output, "getFileSettings File 02 Exception: " + e.getMessage());
-                    }
-                    if (fileSettings02 == null) {
-                        Log.e(TAG, "getFileSettings File 02 Error, Operation aborted");
-                        writeToUiAppend(output, "getFileSettings File 02 Error, Operation aborted");
-                        return;
-                    }
-                    int ACCESS_KEY_RW = fileSettings02.readWritePerm;
-                    int ACCESS_KEY_CAR = fileSettings02.changePerm; // we do need this information later when changing the file settings
-                    writeToUiAppend(output, "getFileSettings File 02 AUTH-KEY RW Is: " + ACCESS_KEY_RW);
-
-                    // in fabric settings or after unset the RW Access Key is 'Eh' = 14 meaning free read and write access
-                    // we have to skip an authentication with this key as it does not exist !
-                    if (ACCESS_KEY_RW == 14) {
-                        // do nothing, skip authentication
                     } else {
-                        if (ACCESS_KEY_RW != ACCESS_KEY0) {
-                            if (!isLrpAuthenticationMode) {
-                                success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY_RW, Ntag424.FACTORY_KEY);
-                            } else {
-                                success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY_RW, Ntag424.FACTORY_KEY);
-                            }
-                            if (!success) {
-                                writeToUiAppend(output, "Error on Authentication with key " + ACCESS_KEY_RW  + ", aborted");
-                                return;
-                            }
-                        }
-                    }
-
-                    // write URL template to file 02 depending on radio button
-                    SDMSettings sdmSettings = new SDMSettings();
-                    sdmSettings.sdmEnabled = true; // at this point we are just preparing the templated but do not enable the SUN/SDM feature
-                    sdmSettings.sdmMetaReadPerm = ACCESS_KEY3; // Set to a key to get encrypted PICC data
-                    sdmSettings.sdmFileReadPerm = ACCESS_KEY4; // Used to create the MAC and Encrypted File data
-                    sdmSettings.sdmReadCounterRetrievalPerm = ACCESS_NONE; // Not sure what this is for
-                    sdmSettings.sdmOptionEncryptFileData = false;
-                    byte[] ndefRecord = null;
-                    NdefTemplateMaster master = new NdefTemplateMaster();
-                    master.usesLRP = isLrpAuthenticationMode;
-                    master.fileDataLength = 0; // no (encrypted) file data
-                    sdmSettings.sdmOptionReadCounter = true;
-                    sdmSettings.sdmOptionUid = true;
-                    ndefRecord = master.generateNdefTemplateFromUrlString("https://id.blahaj.engineering/nfc/auth?picc_data={PICC}&cmac={MAC}", sdmSettings);
-                    try {
-                        WriteData.run(dnaC, NDEF_FILE_NUMBER, ndefRecord, 0);
-                    } catch (IOException e) {
-                        Log.e(TAG, "writeData IOException: " + e.getMessage());
-                        writeToUiAppend(output, "File 02h writeDataIOException: " + e.getMessage());
-                        writeToUiAppend(output, "Writing the NDEF URL Template FAILURE, Operation aborted");
+                        // any other error, print the error code and return
+                        writeToUiAppend(output, "AES Authentication FAILURE");
+                        writeToUiAppend(output, "returnCode is " + Utils.byteToHex(dnaC.getLastCommandResult().status2));
                         return;
                     }
-                    writeToUiAppend(output, "File 02h Writing the NDEF URL Template SUCCESS");
+                }
 
+                // get File Settings for File 2 to get the key number necessary for writing (key 0 or key 2 ?)
+                FileSettings fileSettings02 = null;
+                try {
+                    fileSettings02 = GetFileSettings.run(dnaC, NDEF_FILE_NUMBER);
+                } catch (Exception e) {
+                    Log.e(TAG, "getFileSettings File 02 Exception: " + e.getMessage());
+                    writeToUiAppend(output, "getFileSettings File 02 Exception: " + e.getMessage());
+                }
+                if (fileSettings02 == null) {
+                    Log.e(TAG, "getFileSettings File 02 Error, Operation aborted");
+                    writeToUiAppend(output, "getFileSettings File 02 Error, Operation aborted");
+                    return;
+                }
+                int ACCESS_KEY_RW = fileSettings02.readWritePerm;
+                int ACCESS_KEY_CAR = fileSettings02.changePerm; // we do need this information later when changing the file settings
+                writeToUiAppend(output, "getFileSettings File 02 AUTH-KEY RW Is: " + ACCESS_KEY_RW);
 
-                    // check if we authenticated with the right key - to change the key settings we need the CAR key
-                    if (ACCESS_KEY_CAR != ACCESS_KEY_RW) {
+                // in fabric settings or after unset the RW Access Key is 'Eh' = 14 meaning free read and write access
+                // we have to skip an authentication with this key as it does not exist !
+                if (ACCESS_KEY_RW != 14) {
+                    if (ACCESS_KEY_RW != ACCESS_KEY0) {
                         if (!isLrpAuthenticationMode) {
-                            success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY_CAR, Ntag424.FACTORY_KEY);
+                            success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY_RW, newKey0);
                         } else {
-                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY_CAR, Ntag424.FACTORY_KEY);
+                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY_RW, newKey0);
                         }
                         if (!success) {
-                            writeToUiAppend(output, "Error on Authentication with key " + ACCESS_KEY_CAR  + ", aborted");
+                            writeToUiAppend(output, "Error on Authentication with key " + ACCESS_KEY_RW  + ", aborted");
                             return;
                         }
                     }
+                }
 
-                    // change the auth key settings
-                    fileSettings02.sdmSettings = sdmSettings;
-                    fileSettings02.readWritePerm = ACCESS_KEY2;
-                    fileSettings02.changePerm = ACCESS_KEY0;
-                    fileSettings02.readPerm = ACCESS_KEY2;
-                    fileSettings02.writePerm = ACCESS_KEY2;
-                    try {
-                        ChangeFileSettings.run(dnaC, NDEF_FILE_NUMBER, fileSettings02);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "ChangeFileSettings IOException: " + e.getMessage());
-                        writeToUiAppend(output, "ChangeFileSettings File 02 Error, Operation aborted");
+                // write URL template to file 02 depending on radio button
+                SDMSettings sdmSettings = new SDMSettings();
+                sdmSettings.sdmEnabled = true; // at this point we are just preparing the templated but do not enable the SUN/SDM feature
+                sdmSettings.sdmMetaReadPerm = ACCESS_KEY3; // Set to a key to get encrypted PICC data
+                sdmSettings.sdmFileReadPerm = ACCESS_KEY4; // Used to create the MAC and Encrypted File data
+                sdmSettings.sdmReadCounterRetrievalPerm = ACCESS_NONE; // Not sure what this is for
+                sdmSettings.sdmOptionEncryptFileData = false;
+                byte[] ndefRecord;
+                NdefTemplateMaster master = new NdefTemplateMaster();
+                master.usesLRP = isLrpAuthenticationMode;
+                master.fileDataLength = 0; // no (encrypted) file data
+                sdmSettings.sdmOptionReadCounter = true;
+                sdmSettings.sdmOptionUid = true;
+                ndefRecord = master.generateNdefTemplateFromUrlString("https://id.blahaj.engineering/nfc/auth?picc_data={PICC}&cmac={MAC}", sdmSettings);
+                try {
+                    WriteData.run(dnaC, NDEF_FILE_NUMBER, ndefRecord, 0);
+                } catch (IOException e) {
+                    Log.e(TAG, "writeData IOException: " + e.getMessage());
+                    writeToUiAppend(output, "File 02h writeDataIOException: " + e.getMessage());
+                    writeToUiAppend(output, "Writing the NDEF URL Template FAILURE, Operation aborted");
+                    return;
+                }
+                writeToUiAppend(output, "File 02h Writing the NDEF URL Template SUCCESS");
+
+
+                // check if we authenticated with the right key - to change the key settings we need the CAR key
+                if (ACCESS_KEY_CAR != ACCESS_KEY_RW) {
+                    if (!isLrpAuthenticationMode) {
+                        success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY_CAR, newKey0);
+                    } else {
+                        success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY_CAR, newKey0);
+                    }
+                    if (!success) {
+                        writeToUiAppend(output, "Error on Authentication with key " + ACCESS_KEY_CAR  + ", aborted");
                         return;
                     }
-                    writeToUiAppend(output, "File 02h Change File Settings SUCCESS");
-
-                } catch (IOException e) {
-                    Log.e(TAG, "Exception: " + e.getMessage());
-                    writeToUiAppend(output, "Exception: " + e.getMessage());
                 }
-                writeToUiAppend(output, "== FINISHED ==");
-                vibrateShort();
+
+                // change the auth key settings
+                fileSettings02.sdmSettings = sdmSettings;
+                fileSettings02.readWritePerm = ACCESS_KEY2;
+                fileSettings02.changePerm = ACCESS_KEY0;
+                fileSettings02.readPerm = ACCESS_KEY2;
+                fileSettings02.writePerm = ACCESS_KEY2;
+                try {
+                    ChangeFileSettings.run(dnaC, NDEF_FILE_NUMBER, fileSettings02);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "ChangeFileSettings IOException: " + e.getMessage());
+                    writeToUiAppend(output, "ChangeFileSettings File 02 Error, Operation aborted");
+                    return;
+                }
+                writeToUiAppend(output, "File 02h Change File Settings SUCCESS");
+
+            } catch (IOException e) {
+                Log.e(TAG, "Exception: " + e.getMessage());
+                writeToUiAppend(output, "Exception: " + e.getMessage());
             }
+            writeToUiAppend(output, "== FINISHED ==");
+            vibrateShort();
         });
         worker.start();
     }
@@ -343,14 +334,11 @@ public class EncryptedSunActivity extends AppCompatActivity implements NfcAdapte
         getMenuInflater().inflate(R.menu.menu_return_home, menu);
 
         MenuItem mReturnHome = menu.findItem(R.id.action_return_home);
-        mReturnHome.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(EncryptedSunActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-                return false;
-            }
+        mReturnHome.setOnMenuItemClickListener(item -> {
+            Intent intent = new Intent(EncryptedSunActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return false;
         });
 
         return super.onCreateOptionsMenu(menu);
