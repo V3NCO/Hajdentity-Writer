@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Hajdentity writer!</string>
+    <string name="optional_default">If you leave optional fields empty, it will default to factory or default key</string>
+    <string name="op_keyinput0">Key 0 (Optional)</string>
+    <string name="op_keyinput3">Key 3 (Optional)</string>
+    <string name="op_keyinput4">Key 4 (Optional)</string>
     <string name="keyinput0">Key 0</string>
     <string name="keyinput3">Key 3</string>
     <string name="keyinput4">Key 4</string>
