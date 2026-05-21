@@ -59,13 +59,10 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
 
     private static final String TAG = UnsetActivity.class.getSimpleName();
     private com.google.android.material.textfield.TextInputEditText output;
-
+    private EditText u_key0input, u_key3input, u_key4input;
     private DnaCommunicator dnaC = new DnaCommunicator();
     private NfcAdapter mNfcAdapter;
     private IsoDep isoDep;
-    private EditText key0input, key3input, key4input;
-    private byte[] tagIdByte;
-
 
 
     @Override
@@ -79,16 +76,12 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
             return insets;
         });
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        Toolbar myToolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(myToolbar);
 
         output = findViewById(R.id.etOutput);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-
-        key0input = findViewById(R.id.key0input);
-        key3input = findViewById(R.id.key3input);
-        key4input = findViewById(R.id.key4input);
     }
 
     /**
@@ -137,9 +130,7 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
                 // Make a Vibration
                 vibrateShort();
 
-                runOnUiThread(() -> {
-                    output.setText("");
-                });
+                runOnUiThread(() -> output.setText(""));
 
                 isoDep.connect();
                 if (!isoDep.isConnected()) {
@@ -149,7 +140,7 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
                 }
 
                 // get tag ID
-                tagIdByte = tag.getId();
+                byte[] tagIdByte = tag.getId();
                 writeToUiAppend(output, "Tag ID: " + Utils.bytesToHex(tagIdByte));
                 Log.d(TAG, "tag id: " + Utils.bytesToHex(tagIdByte));
                 writeToUiAppend(output, "NFC tag connected");
@@ -199,175 +190,212 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
 
     private void runWorker() {
         Log.d(TAG, "UnsetActivity Worker");
-        Thread worker = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                boolean success = false;
+        Thread worker = new Thread(() -> {
+            boolean success;
+            try {
+                dnaC = new DnaCommunicator();
                 try {
-                    byte[] key0 = Utils.hexStringToByteArray(key0input.getText().toString());
-                    byte[] key3 = Utils.hexStringToByteArray(key3input.getText().toString());
-                    byte[] key4 = Utils.hexStringToByteArray(key4input.getText().toString());
+                    dnaC.setTransceiver((bytesToSend) -> isoDep.transceive(bytesToSend));
+                } catch (NullPointerException npe) {
+                    writeToUiAppend(output, "Please tap a tag before running any tests, aborted");
+                    return;
+                }
+                dnaC.setLogger((info) -> Log.d(TAG, "Communicator: " + info));
+                dnaC.beginCommunication();
 
-                    dnaC = new DnaCommunicator();
-                    try {
-                        dnaC.setTransceiver((bytesToSend) -> isoDep.transceive(bytesToSend));
-                    } catch (NullPointerException npe) {
-                        writeToUiAppend(output, "Please tap a tag before running any tests, aborted");
-                        return;
-                    }
-                    dnaC.setLogger((info) -> Log.d(TAG, "Communicator: " + info));
-                    dnaC.beginCommunication();
+                /*
+                 * These steps are running - assuming that all keys are 'default' keys filled with 16 00h values
+                 * 1) Authenticate with Application Key 00h in AES mode
+                 * 2) If the authentication in AES mode fails try to authenticate in LRP mode
+                 * 3) Write the default Capability Container content to file 01
+                 * 4) Clear the file 02: fill the 256 bytes with 00h
+                 */
 
-                    /**
-                     * These steps are running - assuming that all keys are 'default' keys filled with 16 00h values
-                     * 1) Authenticate with Application Key 00h in AES mode
-                     * 2) If the authentication in AES mode fails try to authenticate in LRP mode
-                     * 3) Write the default Capability Container content to file 01
-                     * 4) Clear the file 02 (fill the 256 bytes with 00h)
-                     */
+                // authentication
+                boolean isLrpAuthenticationMode = false;
 
-                    // authentication
-                    boolean isLrpAuthenticationMode = false;
-
-                    success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, key0);
-                    if (success) {
-                        writeToUiAppend(output, "AES Authentication SUCCESS");
-                    } else {
-                        // if the returnCode is '919d' = permission denied the tag is in LRP mode authentication
-                        if (dnaC.getLastCommandResult().status2 == PERMISSION_DENIED) {
-                            // try to run the LRP authentication
-                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, key0);
-                            if (success) {
-                                writeToUiAppend(output, "LRP Authentication SUCCESS");
-                                isLrpAuthenticationMode = true;
-                            } else {
-                                writeToUiAppend(output, "LRP Authentication FAILURE");
-                                writeToUiAppend(output, "returnCode is " + Utils.byteToHex(dnaC.getLastCommandResult().status2));
-                                writeToUiAppend(output, "Authentication not possible, Operation aborted");
-                                return;
-                            }
+                success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                if (success) {
+                    writeToUiAppend(output, "AES Authentication SUCCESS");
+                } else {
+                    // if the returnCode is '919d' = permission denied the tag is in LRP mode authentication
+                    if (dnaC.getLastCommandResult().status2 == PERMISSION_DENIED) {
+                        // try to run the LRP authentication
+                        success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                        if (success) {
+                            writeToUiAppend(output, "LRP Authentication SUCCESS");
+                            isLrpAuthenticationMode = true;
                         } else {
-                            // any other error, print the error code and return
-                            writeToUiAppend(output, "AES Authentication FAILURE");
+                            writeToUiAppend(output, "LRP Authentication FAILURE");
                             writeToUiAppend(output, "returnCode is " + Utils.byteToHex(dnaC.getLastCommandResult().status2));
+                            writeToUiAppend(output, "Authentication not possible, Operation aborted");
                             return;
                         }
-                    }
-
-                    // write CC to file 01
-                    try {
-                        WriteData.run(dnaC, CC_FILE_NUMBER, NDEF_FILE_01_CAPABILITY_CONTAINER_DEFAULT, 0);
-                    } catch (IOException e) {
-                        Log.e(TAG, "writeData IOException: " + e.getMessage());
-                        writeToUiAppend(output, "File 01h writeDataIOException: " + e.getMessage());
-                        writeToUiAppend(output, "Writing the Capability Container FAILURE, Operation aborted");
+                    } else {
+                        // any other error, print the error code and return
+                        writeToUiAppend(output, "AES Authentication FAILURE");
+                        writeToUiAppend(output, "returnCode is " + Utils.byteToHex(dnaC.getLastCommandResult().status2));
                         return;
                     }
-                    writeToUiAppend(output, "File 01h Writing the Capability Container SUCCESS");
+                }
 
-                    // Clear the file 02 (fill the 256 bytes with 00h)
-                    FileSettings fileSettings02 = null;
-                    try {
-                        fileSettings02 = GetFileSettings.run(dnaC, NDEF_FILE_NUMBER);
-                    } catch (Exception e) {
-                        Log.e(TAG, "getFileSettings File 02 Exception: " + e.getMessage());
-                        writeToUiAppend(output, "getFileSettings File 02 Exception: " + e.getMessage());
-                    }
-                    if (fileSettings02 == null) {
-                        Log.e(TAG, "getFileSettings File 02 Error, Operation aborted");
-                        writeToUiAppend(output, "getFileSettings File 02 Error, Operation aborted");
-                        return;
-                    }
-                    // new settings
-                    SDMSettings sdmSettings = new SDMSettings();
-                    sdmSettings.sdmEnabled = false; // at this point we are just preparing the templated but do not enable the SUN/SDM feature
-                    sdmSettings.sdmMetaReadPerm = ACCESS_NONE; // Set to a key to get encrypted PICC data
-                    sdmSettings.sdmFileReadPerm = ACCESS_NONE;  // Used to create the MAC and Encrypt FileData
-                    sdmSettings.sdmReadCounterRetrievalPerm = ACCESS_NONE; // Not sure what this is for
-                    sdmSettings.sdmOptionEncryptFileData = false;
-                    fileSettings02.sdmSettings = sdmSettings;
-                    fileSettings02.readWritePerm = ACCESS_EVERYONE;
-                    fileSettings02.changePerm = ACCESS_KEY0;
-                    fileSettings02.readPerm = ACCESS_EVERYONE;
-                    fileSettings02.writePerm = ACCESS_EVERYONE;
+                // write CC to file 01
+                try {
+                    WriteData.run(dnaC, CC_FILE_NUMBER, NDEF_FILE_01_CAPABILITY_CONTAINER_DEFAULT, 0);
+                } catch (IOException e) {
+                    Log.e(TAG, "writeData IOException: " + e.getMessage());
+                    writeToUiAppend(output, "File 01h writeDataIOException: " + e.getMessage());
+                    writeToUiAppend(output, "Writing the Capability Container FAILURE, Operation aborted");
+                    return;
+                }
+                writeToUiAppend(output, "File 01h Writing the Capability Container SUCCESS");
 
-                    try {
-                        ChangeFileSettings.run(dnaC, NDEF_FILE_NUMBER, fileSettings02);
-                    } catch (IOException e) {
-                        Log.e(TAG, "ChangeFileSettings IOException: " + e.getMessage());
-                        writeToUiAppend(output, "ChangeFileSettings File 02 Error, Operation aborted");
-                        return;
-                    }
+                // Clear the file 02 (fill the 256 bytes with 00h)
+                FileSettings fileSettings02 = null;
+                try {
+                    fileSettings02 = GetFileSettings.run(dnaC, NDEF_FILE_NUMBER);
+                } catch (Exception e) {
+                    Log.e(TAG, "getFileSettings File 02 Exception: " + e.getMessage());
+                    writeToUiAppend(output, "getFileSettings File 02 Exception: " + e.getMessage());
+                }
+                if (fileSettings02 == null) {
+                    Log.e(TAG, "getFileSettings File 02 Error, Operation aborted");
+                    writeToUiAppend(output, "getFileSettings File 02 Error, Operation aborted");
+                    return;
+                }
+                // new settings
+                SDMSettings sdmSettings = new SDMSettings();
+                sdmSettings.sdmEnabled = false; // at this point we are just preparing the templated but do not enable the SUN/SDM feature
+                sdmSettings.sdmMetaReadPerm = ACCESS_NONE; // Set to a key to get encrypted PICC data
+                sdmSettings.sdmFileReadPerm = ACCESS_NONE;  // Used to create the MAC and Encrypt FileData
+                sdmSettings.sdmReadCounterRetrievalPerm = ACCESS_NONE; // Not sure what this is for
+                sdmSettings.sdmOptionEncryptFileData = false;
+                fileSettings02.sdmSettings = sdmSettings;
+                fileSettings02.readWritePerm = ACCESS_EVERYONE;
+                fileSettings02.changePerm = ACCESS_KEY0;
+                fileSettings02.readPerm = ACCESS_EVERYONE;
+                fileSettings02.writePerm = ACCESS_EVERYONE;
 
-                    // writing blanks to the file to clear, running in 6 writing sequences
-                    byte[] bytes51Blank = new byte[51];
-                    byte[] bytes01Blank = new byte[1];
-                    try {
-                        WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes51Blank.clone(), 51 * 0);
-                        Log.d(TAG, "Clearing File 02 done part 1");
-                        WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes51Blank.clone(), 51 * 1);
-                        Log.d(TAG, "Clearing File 02 done part 2");
-                        WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes51Blank.clone(), 51 * 2);
-                        Log.d(TAG, "Clearing File 02 done part 3");
-                        WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes51Blank.clone(), 51 * 3);
-                        Log.d(TAG, "Clearing File 02 done part 4");
-                        WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes51Blank.clone(), 51 * 4);
-                        Log.d(TAG, "Clearing File 02 done part 5");
-                        WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes01Blank.clone(), 51 * 5);
-                        Log.d(TAG, "Clearing File 02 done part 6");
-                    } catch (IOException e) {
-                        Log.e(TAG, "writeData IOException: " + e.getMessage());
-                        writeToUiAppend(output, "File 02h Clearing writeDataIOException: " + e.getMessage());
-                        writeToUiAppend(output, "Clearing the File 02 FAILURE, Operation aborted");
-                        return;
-                    }
-                    writeToUiAppend(output, "File 02h Clearing SUCCESS");
+                try {
+                    ChangeFileSettings.run(dnaC, NDEF_FILE_NUMBER, fileSettings02);
+                } catch (IOException e) {
+                    Log.e(TAG, "ChangeFileSettings IOException: " + e.getMessage());
+                    writeToUiAppend(output, "ChangeFileSettings File 02 Error, Operation aborted");
+                    return;
+                }
 
-                    // change the application keys 3 + 4 from custom back to default keys
-                    // to change the keys we need an authentication with application key 0 = master application key
-                    // authentication
+                // writing blanks to the file to clear, running in 6 writing sequences
+                byte[] bytes51Blank = new byte[51];
+                byte[] bytes01Blank = new byte[1];
+                try {
+                    WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes51Blank.clone(), 0);
+                    Log.d(TAG, "Clearing File 02 done part 1");
+                    WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes51Blank.clone(), 51);
+                    Log.d(TAG, "Clearing File 02 done part 2");
+                    WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes51Blank.clone(), 51 * 2);
+                    Log.d(TAG, "Clearing File 02 done part 3");
+                    WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes51Blank.clone(), 51 * 3);
+                    Log.d(TAG, "Clearing File 02 done part 4");
+                    WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes51Blank.clone(), 51 * 4);
+                    Log.d(TAG, "Clearing File 02 done part 5");
+                    WriteData.run(dnaC, NDEF_FILE_NUMBER, bytes01Blank.clone(), 51 * 5);
+                    Log.d(TAG, "Clearing File 02 done part 6");
+                } catch (IOException e) {
+                    Log.e(TAG, "writeData IOException: " + e.getMessage());
+                    writeToUiAppend(output, "File 02h Clearing writeDataIOException: " + e.getMessage());
+                    writeToUiAppend(output, "Clearing the File 02 FAILURE, Operation aborted");
+                    return;
+                }
+                writeToUiAppend(output, "File 02h Clearing SUCCESS");
+
+                // change the application keys 3 + 4 from custom back to default keys
+                // to change the keys we need an authentication with application key 0 = master application key
+                // authentication
+                if (!isLrpAuthenticationMode) {
+                    success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                } else {
+                    success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
+                }
+                if (success) {
+                    writeToUiAppend(output, "Authentication SUCCESS");
+                } else {
+                    writeToUiAppend(output, "Authentication FAILURE");
+                    writeToUiAppend(output, "Authentication not possible, Operation aborted");
+                    return;
+                }
+
+                // change application key 3
+                success = false;
+                try {
+                    ChangeKey.run(dnaC, ACCESS_KEY3, APPLICATION_KEY_3, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
+                    success = true;
+                } catch (IOException e) {
+                    Log.e(TAG, "ChangeKey 3 IOException: " + e.getMessage());
+                }
+                if (success) {
+                    writeToUiAppend(output, "Change Application Key 3 SUCCESS");
+                } else {
+                    writeToUiAppend(output, "Change Application Key 3 FAILURE (maybe the key is already the FACTORY key ?)");
+                    // silent authenticate with Access Key 0 as we had a failure
                     if (!isLrpAuthenticationMode) {
-                        success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, key0);
+                        success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
                     } else {
-                        success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, key0);
+                        success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
                     }
-                    if (success) {
-                        writeToUiAppend(output, "Authentication SUCCESS");
-                    } else {
-                        writeToUiAppend(output, "Authentication FAILURE");
-                        writeToUiAppend(output, "Authentication not possible, Operation aborted");
+                    if (!success) {
+                        writeToUiAppend(output, "Error on Authentication with ACCESS KEY 0, aborted");
                         return;
                     }
+                }
 
-                    // change application key 3
-                    success = false;
-                    try {
-                        ChangeKey.run(dnaC, ACCESS_KEY3, key3, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
-                        success = true;
-                    } catch (IOException e) {
-                        Log.e(TAG, "ChangeKey 3 IOException: " + e.getMessage());
-                    }
-                    if (success) {
-                        writeToUiAppend(output, "Change Application Key 3 SUCCESS");
+                // change application key 4
+                // this key can be static or diversified
+                success = false;
+                try {
+                    ChangeKey.run(dnaC, ACCESS_KEY4, APPLICATION_KEY_4, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
+                    success = true;
+                } catch (IOException e) {
+                    Log.e(TAG, "ChangeKey 4 IOException: " + e.getMessage());
+                }
+                if (success) {
+                    writeToUiAppend(output, "Change Application Key 4 SUCCESS");
+                } else {
+                    writeToUiAppend(output, "Change Application Key 4 FAILURE (maybe the key is already the FACTORY or DIVERSED key ?)");
+                }
+
+                // if no success try with the diversified key, but first authenticate again
+                if (!success) {
+                    // silent authenticate with Access Key 0 as we had a failure
+                    if (!isLrpAuthenticationMode) {
+                        success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
                     } else {
-                        writeToUiAppend(output, "Change Application Key 3 FAILURE (maybe the key is already the FACTORY key ?)");
-                        // silent authenticate with Access Key 0 as we had a failure
-                        if (!isLrpAuthenticationMode) {
-                            success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, key0);
-                        } else {
-                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, key0);
-                        }
-                        if (!success) {
-                            writeToUiAppend(output, "Error on Authentication with ACCESS KEY 0, aborted");
-                            return;
-                        }
+                        success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, Ntag424.FACTORY_KEY);
                     }
-
-                    // change application key 4
-                    // this key can be static or diversified
+                    if (!success) {
+                        writeToUiAppend(output, "Error on Authentication with ACCESS KEY 0, aborted");
+                        return;
+                    }
+                    // now get the real tag UID
+                    // get the real card UID
+                    byte[] realTagUid;
+                    try {
+                        realTagUid = GetCardUid.run(dnaC);
+                        Log.d(TAG, Utils.printData("real Tag UID", realTagUid));
+                    } catch (ProtocolException e) {
+                        writeToUiAppend(output, "Could not read the real Tag UID, aborted");
+                        writeToUiAppend(output, "returnCode is " + Utils.byteToHex(dnaC.getLastCommandResult().status2));
+                        return;
+                    }
+                    // derive the Master Application key with real Tag UID
+                    KeyInfo keyInfo = new KeyInfo();
+                    keyInfo.diversifyKeys = true;
+                    keyInfo.key = MASTER_APPLICATION_KEY_FOR_DIVERSIFYING.clone();
+                    keyInfo.systemIdentifier = SYSTEM_IDENTIFIER_FOR_DIVERSIFYING; // static value for this application
+                    byte[] diversifiedKey = keyInfo.generateKeyForCardUid(realTagUid);
+                    Log.d(TAG, Utils.printData("diversifiedKey", diversifiedKey));
                     success = false;
                     try {
-                        ChangeKey.run(dnaC, ACCESS_KEY4, key4, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
+                        ChangeKey.run(dnaC, ACCESS_KEY4, diversifiedKey, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
                         success = true;
                     } catch (IOException e) {
                         Log.e(TAG, "ChangeKey 4 IOException: " + e.getMessage());
@@ -375,59 +403,15 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
                     if (success) {
                         writeToUiAppend(output, "Change Application Key 4 SUCCESS");
                     } else {
-                        writeToUiAppend(output, "Change Application Key 4 FAILURE (maybe the key is already the FACTORY or DIVERSED key ?)");
+                        writeToUiAppend(output, "Change Application Key 4 FAILURE (UNKNOWN key)");
                     }
-
-                    // if no success try with the diversified key, but first authenticate again
-                    if (!success) {
-                        // silent authenticate with Access Key 0 as we had a failure
-                        if (!isLrpAuthenticationMode) {
-                            success = AESEncryptionMode.authenticateEV2(dnaC, ACCESS_KEY0, key0);
-                        } else {
-                            success = LRPEncryptionMode.authenticateLRP(dnaC, ACCESS_KEY0, key0);
-                        }
-                        if (!success) {
-                            writeToUiAppend(output, "Error on Authentication with ACCESS KEY 0, aborted");
-                            return;
-                        }
-                        // now get the real tag UID
-                        // get the real card UID
-                        byte[] realTagUid = null;
-                        try {
-                            realTagUid = GetCardUid.run(dnaC);
-                            Log.d(TAG, Utils.printData("real Tag UID", realTagUid));
-                        } catch (ProtocolException e) {
-                            writeToUiAppend(output, "Could not read the real Tag UID, aborted");
-                            writeToUiAppend(output, "returnCode is " + Utils.byteToHex(dnaC.getLastCommandResult().status2));
-                            return;
-                        }
-                        // derive the Master Application key with real Tag UID
-                        KeyInfo keyInfo = new KeyInfo();
-                        keyInfo.diversifyKeys = true;
-                        keyInfo.key = MASTER_APPLICATION_KEY_FOR_DIVERSIFYING.clone();
-                        keyInfo.systemIdentifier = SYSTEM_IDENTIFIER_FOR_DIVERSIFYING; // static value for this application
-                        byte[] diversifiedKey = keyInfo.generateKeyForCardUid(realTagUid);
-                        Log.d(TAG, Utils.printData("diversifiedKey", diversifiedKey));
-                        success = false;
-                        try {
-                            ChangeKey.run(dnaC, ACCESS_KEY4, key4, APPLICATION_KEY_DEFAULT, APPLICATION_KEY_VERSION_DEFAULT);
-                            success = true;
-                        } catch (IOException e) {
-                            Log.e(TAG, "ChangeKey 4 IOException: " + e.getMessage());
-                        }
-                        if (success) {
-                            writeToUiAppend(output, "Change Application Key 4 SUCCESS");
-                        } else {
-                            writeToUiAppend(output, "Change Application Key 4 FAILURE (UNKNOWN key)");
-                        }
-                    }
-                } catch (IOException e) {
-                    Log.e(TAG, "Exception: " + e.getMessage());
-                    writeToUiAppend(output, "Exception: " + e.getMessage());
                 }
-                writeToUiAppend(output, "== FINISHED ==");
-                vibrateShort();
+            } catch (IOException e) {
+                Log.e(TAG, "Exception: " + e.getMessage());
+                writeToUiAppend(output, "Exception: " + e.getMessage());
             }
+            writeToUiAppend(output, "== FINISHED ==");
+            vibrateShort();
         });
         worker.start();
     }
@@ -441,14 +425,11 @@ public class UnsetActivity extends AppCompatActivity implements NfcAdapter.Reade
         getMenuInflater().inflate(R.menu.menu_return_home, menu);
 
         MenuItem mReturnHome = menu.findItem(R.id.action_return_home);
-        mReturnHome.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Intent intent = new Intent(UnsetActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-                return false;
-            }
+        mReturnHome.setOnMenuItemClickListener(item -> {
+            Intent intent = new Intent(UnsetActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+            return false;
         });
 
         return super.onCreateOptionsMenu(menu);
